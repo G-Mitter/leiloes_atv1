@@ -1,4 +1,7 @@
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
@@ -19,6 +22,7 @@ public class listagemVIEW extends javax.swing.JFrame {
     public listagemVIEW() {
         initComponents();
         listarProdutos();
+        atualizarTabela();
     }
 
     /**
@@ -42,18 +46,13 @@ public class listagemVIEW extends javax.swing.JFrame {
         btnVoltar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        listaProdutos.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "ID", "Nome", "Valor", "Status"
+        addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                formFocusGained(evt);
             }
-        ));
+        });
+
+        listaProdutos.setModel(montarTabela());
         jScrollPane1.setViewportView(listaProdutos);
 
         jLabel1.setFont(new java.awt.Font("Lucida Fax", 0, 18)); // NOI18N
@@ -153,6 +152,104 @@ public class listagemVIEW extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnVoltarActionPerformed
 
+    private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
+            atualizarTabela();
+        
+    
+    }//GEN-LAST:event_formFocusGained
+
+        public void atualizarTabela(){
+         listaProdutos.setModel(montarTabela());
+    }
+    
+    
+      private DefaultTableModel montarTabela(){
+        String [] colunas = {"ID","Nome","valor","status"};
+        
+        DefaultTableModel tabela = new DefaultTableModel(colunas, 0);
+       ProdutosDTO p = new ProdutosDTO();
+      ProdutosDAO PDAO = new ProdutosDAO();
+       
+        
+      
+       conectaDAO conexaoSelect = new conectaDAO();
+       conexaoSelect.conexao();
+
+            try {
+
+                String sql = "Select * from produtos;";
+                PreparedStatement stmt = conexaoSelect.getConn().prepareStatement(sql);
+                
+                ResultSet resposta = stmt.executeQuery();
+                
+                while(resposta.next()){
+                    
+                    
+                    
+                    p.setId(Integer.parseInt(resposta.getString("id")));
+                    p.setNome(resposta.getString("Nome"));
+                    p.setValor(Integer.parseInt(resposta.getString("Valor")));
+                    p.setStatus(resposta.getString("Status"));
+                    
+                    
+                    String[] linha = {
+                        p.getId().toString(),
+                        p.getNome(),
+                        p.getValor().toString(),
+                        p.getStatus()
+                    };
+                    PDAO.Adicionar(p);
+                    tabela.addRow(linha);
+                        
+                    }
+                    
+                    
+                    
+                    conexaoSelect.desconectar();
+                }
+                 catch (SQLException sqle) {
+                System.out.println("Erro ao buscar dados Dados : " + sqle.getMessage());
+                
+            }
+            
+            
+            
+            
+       
+       /* 
+        for(int i = 0; i < lista.getLista().size(); i++) {
+            
+            Filmes f = lista.get(i);
+            String[] linha = {
+                p.getData(),
+                p.getHora(),
+                Integer.toString(p.getPressaoSistolica()),
+                Integer.toString(p.getPressaoDiastolica()),
+                p.getTextEstressado()
+            };
+            tabela.addRow(linha);
+        }*/
+        
+        
+        return tabela;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * @param args the command line arguments
      */

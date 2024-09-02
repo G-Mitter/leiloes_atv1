@@ -20,6 +20,45 @@ public class ProdutosDAO {
     PreparedStatement prep;
     ResultSet resultset;
     ArrayList<ProdutosDTO> listagem = new ArrayList<>();
+    
+    
+    
+
+    public Connection getConn() {
+        return conn;
+    }
+
+    public void setConn(Connection conn) {
+        this.conn = conn;
+    }
+
+    public PreparedStatement getPrep() {
+        return prep;
+    }
+
+    public void setPrep(PreparedStatement prep) {
+        this.prep = prep;
+    }
+
+    public ResultSet getResultset() {
+        return resultset;
+    }
+
+    public void setResultset(ResultSet resultset) {
+        this.resultset = resultset;
+    }
+
+    public ArrayList<ProdutosDTO> getListagem() {
+        return listagem;
+    }
+
+    public void setListagem(ArrayList<ProdutosDTO> listagem) {
+        this.listagem = listagem;
+    }
+    
+    
+    
+    
 
     public boolean cadastrarProduto(ProdutosDTO p) {
 
@@ -53,14 +92,57 @@ public class ProdutosDAO {
             }
 
             //conn = new conectaDAO().connectDB();
-            
         }
         return false;
     }
 
     public ArrayList<ProdutosDTO> listarProdutos() {
+        ArrayList<ProdutosDTO> listagem = new ArrayList<>();
 
         return listagem;
+    }
+
+    public void Listar() {
+
+        for (int i = 0; i <= listagem.size(); i++) {
+
+        }
+    }
+
+    public void Select() {
+
+        conectaDAO conexaoSelect = new conectaDAO();
+        conexaoSelect.conexao();
+
+        try {
+
+            String sql = "Select * from produtos;";
+            PreparedStatement stmt = conexaoSelect.getConn().prepareStatement(sql);
+
+            ResultSet resposta = stmt.executeQuery();
+
+            while (resposta.next()) {
+                ProdutosDTO p = new ProdutosDTO();
+                
+
+                p.setId(Integer.parseInt(resposta.getString("id")));
+                p.setNome(resposta.getString("nome"));
+                p.setValor(Integer.parseInt(resposta.getString("valor")));
+                p.setStatus(resposta.getString("status"));
+
+                listagem.add(p);
+            }
+            conexaoSelect.desconectar();
+
+        } catch (SQLException sqle) {
+            System.out.println("Erro ao buscar dados Dados : " + sqle.getMessage());
+
+        }
+        
+        
+    }
+         public void Adicionar(ProdutosDTO p){
+        listagem.add(p);
     }
 
 }
