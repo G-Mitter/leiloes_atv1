@@ -3,6 +3,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -137,7 +138,34 @@ public class listagemVIEW extends javax.swing.JFrame {
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
         String id = id_produto_venda.getText();
         
-        ProdutosDAO produtosdao = new ProdutosDAO();
+        ProdutosDAO pd = new ProdutosDAO();
+        
+        ProdutosDTO p = new ProdutosDTO();
+        
+        try {
+            int ids = Integer.parseInt(id);
+            p.setId(ids);
+            
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null,"Insira número compativel");
+        }
+        
+        
+        boolean resultado = pd.venderProduto(p);
+
+        if (resultado) {
+            JOptionPane.showMessageDialog(null, "Produto Vendido com sucesso!");
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Erro na tentativa de Venda!");
+
+        }
+
+        
+        
+       
+        
+        
         
         //produtosdao.venderProduto(Integer.parseInt(id));
         listarProdutos();

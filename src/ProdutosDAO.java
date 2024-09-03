@@ -141,7 +141,8 @@ public class ProdutosDAO {
     public void AdicionarStatus(ProdutosDTO p) {
         listagemStatus.add(p);
     }
-    public void venderProduto(ProdutosDTO p) {
+    
+    public  boolean venderProduto(ProdutosDTO p) {
 
         conectaDAO conexaoUpdate = new conectaDAO();
         conexaoUpdate.conexao();
@@ -158,13 +159,14 @@ public class ProdutosDAO {
                 stmt.setString(1, status);
                 stmt.setInt(2, id);
                 stmt.executeUpdate();
+                 return true;
 
             } catch (SQLException sqle) {
                 System.out.println("Erro ao atualizar Dados : " + sqle.getMessage());
-
+ return false;
             }
         } else {
-
+             return false;
         }
 
     }
