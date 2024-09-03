@@ -20,6 +20,8 @@ public class ProdutosDAO {
     PreparedStatement prep;
     ResultSet resultset;
     ArrayList<ProdutosDTO> listagem = new ArrayList<>();
+    ArrayList<ProdutosDTO> listagemStatus = new ArrayList<>();
+    
 
     public Connection getConn() {
         return conn;
@@ -136,15 +138,16 @@ public class ProdutosDAO {
     public void Adicionar(ProdutosDTO p) {
         listagem.add(p);
     }
-    
-    public void venderProduto(ProdutosDTO p){
+    public void AdicionarStatus(ProdutosDTO p) {
+        listagemStatus.add(p);
+    }
+    public void venderProduto(ProdutosDTO p) {
 
         conectaDAO conexaoUpdate = new conectaDAO();
         conexaoUpdate.conexao();
 
         if (conexaoUpdate.conexao()) {
 
-            
             String status = "Vendido";
             int id = p.getId();
 
@@ -155,17 +158,49 @@ public class ProdutosDAO {
                 stmt.setString(1, status);
                 stmt.setInt(2, id);
                 stmt.executeUpdate();
-                
 
             } catch (SQLException sqle) {
                 System.out.println("Erro ao atualizar Dados : " + sqle.getMessage());
-                
+
             }
         } else {
-            
+
         }
 
-    
-        
+    }
+
+    public ProdutosDTO listarProdutosVendidos() {
+
+        conectaDAO conexaoSelect = new conectaDAO();
+        conexaoSelect.conexao();
+        String status = "Vendido";
+
+        try {
+
+            String sql = "Select * from produtos where status = '" + status + "';";
+            PreparedStatement stmt = conexaoSelect.getConn().prepareStatement(sql);
+
+            ResultSet resposta = stmt.executeQuery();
+
+            while (resposta.next()) {
+                ProdutosDTO p = new ProdutosDTO();
+
+                p.setId(resposta.getInt("id"));
+                p.setNome(resposta.getString("nome"));
+                p.setValor(resposta.getInt("valor"));
+                p.setStatus(resposta.getString("status"));
+
+                AdicionarStatus(p);
+                return p;
+            }
+
+            conexaoSelect.desconectar();
+
+        } catch (SQLException sqle) {
+            System.out.println("Erro ao buscar dados Dados : " + sqle.getMessage());
+
+        }
+        return null;
+
     }
 }
