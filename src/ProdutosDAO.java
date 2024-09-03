@@ -20,9 +20,6 @@ public class ProdutosDAO {
     PreparedStatement prep;
     ResultSet resultset;
     ArrayList<ProdutosDTO> listagem = new ArrayList<>();
-    
-    
-    
 
     public Connection getConn() {
         return conn;
@@ -55,10 +52,6 @@ public class ProdutosDAO {
     public void setListagem(ArrayList<ProdutosDTO> listagem) {
         this.listagem = listagem;
     }
-    
-    
-    
-    
 
     public boolean cadastrarProduto(ProdutosDTO p) {
 
@@ -123,7 +116,6 @@ public class ProdutosDAO {
 
             while (resposta.next()) {
                 ProdutosDTO p = new ProdutosDTO();
-                
 
                 p.setId(Integer.parseInt(resposta.getString("id")));
                 p.setNome(resposta.getString("nome"));
@@ -138,11 +130,42 @@ public class ProdutosDAO {
             System.out.println("Erro ao buscar dados Dados : " + sqle.getMessage());
 
         }
-        
-        
-    }
-         public void Adicionar(ProdutosDTO p){
-        listagem.add(p);
+
     }
 
+    public void Adicionar(ProdutosDTO p) {
+        listagem.add(p);
+    }
+    
+    public void venderProduto(ProdutosDTO p){
+
+        conectaDAO conexaoUpdate = new conectaDAO();
+        conexaoUpdate.conexao();
+
+        if (conexaoUpdate.conexao()) {
+
+            
+            String status = "Vendido";
+            int id = p.getId();
+
+            try {
+
+                String sql = "UPDATE produtos SET status = ? Where id = ?";
+                PreparedStatement stmt = conexaoUpdate.getConn().prepareStatement(sql);
+                stmt.setString(1, status);
+                stmt.setInt(2, id);
+                stmt.executeUpdate();
+                
+
+            } catch (SQLException sqle) {
+                System.out.println("Erro ao atualizar Dados : " + sqle.getMessage());
+                
+            }
+        } else {
+            
+        }
+
+    
+        
+    }
 }
